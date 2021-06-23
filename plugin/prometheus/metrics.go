@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/nextdhcp/nextdhcp/core/log"
+	"github.com/apex/log"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -27,7 +27,6 @@ type Metrics struct {
 	path           string
 	extraLabels    []extraLabel
 	latencyBuckets []float64
-	L              log.Logger
 }
 
 type extraLabel struct {
@@ -36,7 +35,7 @@ type extraLabel struct {
 }
 
 // NewMetrics create a new Metrics
-func NewMetrics(path, addr string, l log.Logger) *Metrics {
+func NewMetrics(path, addr string) *Metrics {
 
 	p := path
 	if path == "" {
@@ -49,7 +48,6 @@ func NewMetrics(path, addr string, l log.Logger) *Metrics {
 	return &Metrics{
 		path:        p,
 		addr:        a,
-		L:           l,
 		extraLabels: []extraLabel{},
 	}
 }
@@ -94,9 +92,9 @@ func (m *Metrics) start() error {
 	go func() {
 		err := http.ListenAndServe(m.addr, nil)
 		if err != nil {
-			m.L.Errorf("[ERROR] Starting handler: %v", err)
+			log.Errorf("[ERROR] Starting handler: %v", err)
 		}
-		m.L.Infof("listening at:%s, path: %s", m.addr, m.path)
+
 	}()
 
 	return nil

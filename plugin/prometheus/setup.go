@@ -1,13 +1,11 @@
 package prometheus
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 
 	"github.com/caddyserver/caddy"
 	"github.com/nextdhcp/nextdhcp/core/dhcpserver"
-	"github.com/nextdhcp/nextdhcp/core/log"
 	"github.com/nextdhcp/nextdhcp/plugin"
 )
 
@@ -22,7 +20,6 @@ func init() {
 type Plugin struct {
 	Next    plugin.Handler
 	Metrics *Metrics
-	L       log.Logger
 }
 
 func setupPrometheus(c *caddy.Controller) error {
@@ -44,17 +41,14 @@ func parse(c *caddy.Controller) (*Plugin, error) {
 		err     error
 	)
 	p := &Plugin{}
-	p.L = log.GetLogger(c, p)
-	if p.L == nil {
-		return nil, errors.New("Log is not init")
-	}
+
 	for c.Next() {
 		if metrics != nil {
 			return nil, c.Err("prometheus: can only have one metrics module per server")
 		}
 
 		args := c.RemainingArgs()
-		metrics = NewMetrics("", "", p.L)
+		metrics = NewMetrics("", "")
 		switch len(args) {
 		case 0:
 		case 1:

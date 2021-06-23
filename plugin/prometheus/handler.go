@@ -2,6 +2,7 @@ package prometheus
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/insomniacslk/dhcp/dhcpv4"
@@ -29,7 +30,7 @@ func (p *Plugin) ServeDHCP(ctx context.Context, req, res *dhcpv4.DHCPv4) error {
 
 	requestCount.WithLabelValues(append([]string{requestType}, extraLabelValues...)...).Inc()
 
-	p.L.Infof("Prometheus monitoring request_type: %s, response_type: %s", requestType, responseType)
+	log.Printf("Prometheus monitoring request_type: %s, response_type: %s", requestType, responseType)
 
 	return p.Next.ServeDHCP(ctx, req, res)
 }
