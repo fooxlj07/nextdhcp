@@ -1,6 +1,7 @@
 package prometheus
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 
@@ -44,6 +45,9 @@ func parse(c *caddy.Controller) (*Plugin, error) {
 	)
 	p := &Plugin{}
 	p.L = log.GetLogger(c, p)
+	if p.L == nil {
+		return nil, errors.New("Log is not init")
+	}
 	for c.Next() {
 		if metrics != nil {
 			return nil, c.Err("prometheus: can only have one metrics module per server")
